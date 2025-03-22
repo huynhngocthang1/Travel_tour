@@ -1,0 +1,131 @@
+/* Định dạng tổng thể */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Tiêu đề trang đăng nhập */
+.login-header {
+    margin-bottom: 1.5rem;
+}
+
+.login-header h1 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.login-header p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+/* Form đăng nhập */
+.login-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 420px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.login-form:hover {
+    transform: scale(1.02);
+}
+
+/* Ô input */
+.input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+    min-height: 80px; /* Giữ chỗ cho lỗi */
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Container giữ chỗ lỗi */
+.error-container {
+    min-height: 18px; /* Để lỗi không bị dính vào input */
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+}
+
+/* Hiển thị lỗi */
+.error-message {
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+/* Nếu input có lỗi */
+.input-error input {
+    border-color: red;
+}
+
+/* Nút đăng nhập */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.login-button:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Link Quên mật khẩu & Đăng ký */
+.login-links {
+    text-align: center;
+    margin-top: 1.2rem;
+}
+
+.login-links p {
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.login-links p span {
+    font-weight: bold;
+}
+
+.login-links p:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
