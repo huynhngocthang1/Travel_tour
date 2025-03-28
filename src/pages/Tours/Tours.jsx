@@ -25,7 +25,7 @@ const Tours = () => {
             <Col xl="3" lg="4" md="12" sm="12">
             <div className="d-lg-none d-block">
                     <button className="primaryBtn mb-4" onClick={handleShow}>
-                       <i className="bi bi-funnel"></i> Filters
+                       <i className="bi bi-funnel"></i> Bộ lọc
                     </button>
             </div>
             <div className="filters d-lg-block d-none">
@@ -50,7 +50,7 @@ const Tours = () => {
 
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Filters</Offcanvas.Title>
+          <Offcanvas.Title>Bộ lọc</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
         <Filters />

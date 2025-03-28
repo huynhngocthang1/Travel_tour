@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./register.css"; // Import CSS riêng
 
 const RegisterForm = () => {
   const [user, setUser] = useState({
@@ -8,6 +9,7 @@ const RegisterForm = () => {
     password: "",
     confirmPassword: "",
   });
+
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const navigate = useNavigate();
@@ -16,20 +18,54 @@ const RegisterForm = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
+  // Kiểm tra lỗi khi blur input
+  const validateField = (field, value) => {
+    let newErrors = { ...errors };
+
+    if (field === "name") {
+      if (!value.trim()) newErrors.name = "Tên không được để trống";
+      else delete newErrors.name;
+    }
+
+    if (field === "email") {
+      if (!value.trim()) newErrors.email = "Email không được để trống";
+      else if (!emailRegex.test(value)) newErrors.email = "Email không hợp lệ";
+      else delete newErrors.email;
+    }
+
+    if (field === "password") {
+      if (!value.trim()) newErrors.password = "Mật khẩu không được để trống";
+      else if (!passwordRegex.test(value))
+        newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số, 1 ký tự đặc biệt";
+      else delete newErrors.password;
+    }
+
+    if (field === "confirmPassword") {
+      if (!value.trim()) newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
+      else if (value !== user.password) newErrors.confirmPassword = "Mật khẩu không khớp";
+      else delete newErrors.confirmPassword;
+    }
+
+    setErrors(newErrors);
+  };
+
+  // Xử lý nhập input
+  const handleInputChange = (field, value) => {
+    setUser({ ...user, [field]: value });
+    setTouched({ ...touched, [field]: true });
+
+    // Kiểm tra lỗi ngay khi nhập đúng
+    validateField(field, value);
+  };
+
+  // Xác thực toàn bộ form trước khi submit
   const validateForm = () => {
     let newErrors = {};
 
-    if (!user.name.trim()) newErrors.name = "Tên không được để trống";
-    if (!user.email) newErrors.email = "Email không được để trống";
-    else if (!emailRegex.test(user.email)) newErrors.email = "Email không hợp lệ";
-
-    if (!user.password) newErrors.password = "Mật khẩu không được để trống";
-    else if (!passwordRegex.test(user.password))
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số, 1 ký tự đặc biệt";
-
-    if (!user.confirmPassword) newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
-    else if (user.password !== user.confirmPassword)
-      newErrors.confirmPassword = "Mật khẩu không khớp";
+    Object.keys(user).forEach((field) => {
+      validateField(field, user[field]);
+      if (!user[field].trim()) newErrors[field] = "Không được để trống";
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -39,63 +75,79 @@ const RegisterForm = () => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Đăng ký thành công!", user);
-      navigate("/login");
+      navigate("/login"); // Điều hướng về trang đăng nhập
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="register-form">
-      <div className={`input-group ${errors.name ? "input-error" : ""}`}>
-        <label>Tên:</label>
-        <input
-          type="text"
-          value={user.name}
-          onChange={(e) => setUser({ ...user, name: e.target.value })}
-          onBlur={() => setTouched({ ...touched, name: true })}
-        />
-        {errors.name && touched.name && <p className="error-message">{errors.name}</p>}
+    <div className="register-container">
+      <div className="register-header">
+        <h1>Đăng ký</h1>
+        <p>Tạo tài khoản mới để trải nghiệm ngay!</p>
       </div>
+      <form onSubmit={handleSubmit} className="register-form">
+        {/* Tên */}
+        <div className={`register-input-group ${errors.name ? "register-input-error" : ""}`}>
+          <label>Tên:</label>
+          <input
+            type="text"
+            className="register-input"
+            value={user.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+            onBlur={() => validateField("name", user.name)}
+          />
+          {touched.name && errors.name && <p className="register-error-message">{errors.name}</p>}
+        </div>
 
-      <div className={`input-group ${errors.email ? "input-error" : ""}`}>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
-          onBlur={() => setTouched({ ...touched, email: true })}
-        />
-        {errors.email && touched.email && <p className="error-message">{errors.email}</p>}
-      </div>
+        {/* Email */}
+        <div className={`register-input-group ${errors.email ? "register-input-error" : ""}`}>
+          <label>Email:</label>
+          <input
+            type="email"
+            className="register-input"
+            value={user.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            onBlur={() => validateField("email", user.email)}
+          />
+          {touched.email && errors.email && <p className="register-error-message">{errors.email}</p>}
+        </div>
 
-      <div className={`input-group ${errors.password ? "input-error" : ""}`}>
-        <label>Mật khẩu:</label>
-        <input
-          type="password"
-          value={user.password}
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
-          onBlur={() => setTouched({ ...touched, password: true })}
-        />
-        {errors.password && touched.password && <p className="error-message">{errors.password}</p>}
-      </div>
+        {/* Mật khẩu */}
+        <div className={`register-input-group ${errors.password ? "register-input-error" : ""}`}>
+          <label>Mật khẩu:</label>
+          <input
+            type="password"
+            className="register-input"
+            value={user.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            onBlur={() => validateField("password", user.password)}
+          />
+          {touched.password && errors.password && <p className="register-error-message">{errors.password}</p>}
+        </div>
 
-      <div className={`input-group ${errors.confirmPassword ? "input-error" : ""}`}>
-        <label>Nhập lại mật khẩu:</label>
-        <input
-          type="password"
-          value={user.confirmPassword}
-          onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
-          onBlur={() => setTouched({ ...touched, confirmPassword: true })}
-        />
-        {errors.confirmPassword && touched.confirmPassword && (
-          <p className="error-message">{errors.confirmPassword}</p>
-        )}
-      </div>
+        {/* Xác nhận mật khẩu */}
+        <div className={`register-input-group ${errors.confirmPassword ? "register-input-error" : ""}`}>
+          <label>Nhập lại mật khẩu:</label>
+          <input
+            type="password"
+            className="register-input"
+            value={user.confirmPassword}
+            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+            onBlur={() => validateField("confirmPassword", user.confirmPassword)}
+          />
+          {touched.confirmPassword && errors.confirmPassword && (
+            <p className="register-error-message">{errors.confirmPassword}</p>
+          )}
+        </div>
 
-      <button type="submit" className="register-button">Đăng ký</button>
-      <p className="register-links" onClick={() => navigate("/login")}>
-        Đã có tài khoản? <span>Đăng nhập</span>
-      </p>
-    </form>
+        <button type="submit" className="register-button">Đăng ký</button>
+
+        {/* Link quay lại trang đăng nhập */}
+        <p className="register-links" onClick={() => navigate("/login")}>
+          Đã có tài khoản? <span>Đăng nhập</span>
+        </p>
+      </form>
+    </div>
   );
 };
 

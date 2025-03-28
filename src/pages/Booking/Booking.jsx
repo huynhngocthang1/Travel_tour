@@ -84,7 +84,7 @@ const Booking = () => {
                       as={Col}
                       md="6"
                     >
-                      <Form.Label className="d-block">Check In</Form.Label>
+                      <Form.Label className="d-block">Ngày đi</Form.Label>
                       <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
@@ -102,7 +102,7 @@ const Booking = () => {
                       as={Col}
                       md="6"
                     >
-                      <Form.Label className="d-block">Check Out</Form.Label>
+                      <Form.Label className="d-block">Ngày về</Form.Label>
                       <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
@@ -114,7 +114,7 @@ const Booking = () => {
                       />
                     </Form.Group>
                     <Col md="12">
-                      <button className="primaryBtn "> Submit Now</button>
+                      <button className="primaryBtn "> Gửi ngay</button>
                     </Col>
                   </Row>
                 </Form>

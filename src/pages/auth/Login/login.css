@@ -71,24 +71,26 @@
 }
 
 /* Container giữ chỗ lỗi */
+/* Thông báo lỗi */
 .error-container {
-    min-height: 18px; /* Để lỗi không bị dính vào input */
-    margin-top: 4px;
+    min-height: 20px; /* Giữ khoảng trống ngay cả khi không có lỗi */
+    margin-top: 6px;  /* Tạo khoảng cách giữa input và lỗi */
     display: flex;
     align-items: center;
 }
 
-/* Hiển thị lỗi */
+/* Thông báo lỗi */
 .error-message {
     color: red;
-    font-size: 14px;
-    font-weight: bold;
-    margin-left: 2px;
+    font-size: 13px;
+    margin-top: 5px;  /* Tạo khoảng cách với input */
+    text-align: left;
+    display: block;  /* Đảm bảo không dính vào input */
 }
 
-/* Nếu input có lỗi */
 .input-error input {
     border-color: red;
+    margin-bottom: 5px; /* Đẩy input xuống để tạo khoảng cách */
 }
 
 /* Nút đăng nhập */

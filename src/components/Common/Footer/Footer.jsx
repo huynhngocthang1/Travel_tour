@@ -1,116 +1,80 @@
-import React, { useState } from "react";
-import "../Footer/footer.css"
-import { Col, Container, Row ,ListGroup} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import "../Footer/footer.css";
+import { Col, Container, Row, ListGroup } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
-  const [visible, setVisible]=useState(false);
+  const [visible, setVisible] = useState(false);
 
-  const toggleVisible=()=>{
-    const scrolled = document.documentElement.scrollTop;
-    if(scrolled > 300){
-      setVisible(true)
-    }
-   else if(scrolled  <= 300){
-      setVisible(false)
-    }
-  }
+  const toggleVisible = () => {
+    setVisible(window.scrollY > 300);
+  };
 
-  const scrollTop =()=>{
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    })
-  }
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  if(typeof window !== "undefined"){
-    window.addEventListener("scroll", toggleVisible)
-  }
-
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisible);
+    return () => {
+      window.removeEventListener("scroll", toggleVisible);
+    };
+  }, []);
 
   return (
     <>
-    <footer className="pt-5">
-      <Container>
-        <Row>
-          <Col md="3" sm="12" className="quick_link mt-3 mt-md-0 ">
-            <h4 className="mt-lg-0 mt-sm-3">Company </h4>
-            <ListGroup variant="flush">
-              <ListGroup.Item>
-                <NavLink to="/">About Us</NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/">News</NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/">Faq</NavLink>
-              </ListGroup.Item>
-             
-            </ListGroup>
-          </Col>
-          <Col md="3" sm="12" className="quick_link mt-3 mt-md-0 ">
-          <h4 className="mt-lg-0 mt-sm-3">Explore </h4>
-          <ListGroup variant="flush">
-              <ListGroup.Item>
-                <NavLink to="/"> Faq</NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/">Tour Listings</NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/"> Destination</NavLink>
-              </ListGroup.Item>
-             
-            </ListGroup>
-          </Col>
-          <Col md="3" sm="12" className="quick_link mt-3 mt-md-0 ">
-          <h4 className="mt-lg-0 mt-sm-3">Quick Link </h4>
-          <ListGroup variant="flush">
-              <ListGroup.Item>
-                <NavLink to="/"> Home</NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/">About Us </NavLink>
-              </ListGroup.Item>
-              <ListGroup.Item>
-              <NavLink to="/"> Contact Us </NavLink>
-              </ListGroup.Item>
-             
-            </ListGroup>
-          </Col>
-          <Col md="3" sm="12" className="location mt-3 mt-md-0 ">
-          <h4 className="mt-lg-0 mt-sm-3">Thông tin liên hệ </h4>
+      <footer className="footer">
+        <Container>
+          <Row className="py-5">
+            {/* Cột 1 */}
+            <Col md="3" sm="6">
+              <h4>🌍 Về Chúng Tôi</h4>
+              <p>Chúng tôi cung cấp những tour du lịch chất lượng với trải nghiệm đáng nhớ nhất.</p>
+            </Col>
 
-          <div className="d-flex align-items-center">
-            <p className="pb-2"> Phu Loc, Thua Thien Hue</p>
-          </div>
+            {/* Cột 2 */}
+            <Col md="3" sm="6">
+              <h4>🔗 Liên Kết Nhanh</h4>
+              <ListGroup variant="flush">
+                <ListGroup.Item><NavLink to="/">Trang Chủ</NavLink></ListGroup.Item>
+                <ListGroup.Item><NavLink to="/about-us">Giới Thiệu</NavLink></ListGroup.Item>
+                <ListGroup.Item><NavLink to="/contact-us">Liên Hệ</NavLink></ListGroup.Item>
+              </ListGroup>
+            </Col>
 
-          <div className="d-flex align-items-top my-2">
-          <i className="bi bi-geo-alt me-3"></i>
-          <a target="_blank" href="mailto:ngocthangthcs@gmail.com" className="d-block" >ngocthangthcs@gmail.com</a>
-          </div>
-          <div className="d-flex align-items-top ">
-          <i className="bi bi-telephone me-3"></i>
-          <a target="_blank" href="tel:9876543210" className="d-block" >0779407905</a>
-          </div>
-         
-          </Col>
-        </Row>
-        <Row className="py-2 bdr mt-3">
-        <Col className="col copyright">
-        <p className="text-light">   @ 2025. Copyright by Nhom 66</p> 
-        </Col>
-        </Row>
+            {/* Cột 3 */}
+            <Col md="3" sm="6">
+              <h4>🌍 Khám Phá</h4>
+              <ListGroup variant="flush">
+                <ListGroup.Item><NavLink to="/tours">Tour Du Lịch</NavLink></ListGroup.Item>
+                <ListGroup.Item><NavLink to="/destinations">Điểm Đến</NavLink></ListGroup.Item>
+                <ListGroup.Item><NavLink to="/faq">Câu Hỏi Thường Gặp</NavLink></ListGroup.Item>
+              </ListGroup>
+            </Col>
 
-      </Container>
-    </footer>
+            {/* Cột 4 */}
+            <Col md="3" sm="6">
+              <h4>📍 Thông Tin Liên Hệ</h4>
+              <p><i className="bi bi-geo-alt"></i> Phú Lộc, Thừa Thiên Huế</p>
+              <p><i className="bi bi-envelope"></i> <a href="mailto:ngocthangthcs@gmail.com">ngocthangthcs@gmail.com</a></p>
+              <p><i className="bi bi-telephone"></i> <a href="tel:0779407905">0779 407 905</a></p>
+            </Col>
+          </Row>
 
-    <div id="back-top"
-    onClick={scrollTop}
-     className={visible ? "active" : ""}>
-    <i className="bi bi-arrow-up"></i>
+          <Row className="text-center copyright">
+            <Col>
+              <p>© 2025 Nhóm 66. All Rights Reserved.</p>
+            </Col>
+          </Row>
+        </Container>
+      </footer>
 
-    </div>
+      {/* Nút quay lại đầu trang */}
+      {visible && (
+        <div className="back-to-top" onClick={scrollTop}>
+          <i className="bi bi-arrow-up"></i>
+        </div>
+      )}
     </>
   );
 };

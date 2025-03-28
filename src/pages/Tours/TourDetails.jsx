@@ -176,7 +176,7 @@ const TourDetails = () => {
                     <Tab.Pane eventKey="4">
                       <div className="tour_details">
                         <h1 className="font-bold mb-4 h3 border-bottom pb-2">
-                          Location
+                          Vị trí
                         </h1>
 
                         <iframe
@@ -200,7 +200,7 @@ const TourDetails = () => {
                           <h1 className="font-bold mb-0 h2">
                             ${tourDetails.price}
                           </h1>
-                          <span className="fs-4"> /person</span>
+                          <span className="fs-4"> /người</span>
                         </Stack>
 
                         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -228,27 +228,27 @@ const TourDetails = () => {
                         </div>
 
                         <NavLink to="/booking" className="primaryBtn w-100 d-flex justify-content-center fw-bold">
-                          Book Now
+                          Đặt ngay
                         </NavLink>
                       </Card.Body>
                     </Card>
 
                     <Card className="card-info p-2 shadow-sm">
                       <Card.Body>
-                        <h1 className="font-bold mb-2 h3">Need Help ?</h1>
+                        <h1 className="font-bold mb-2 h3">Cần giúp đỡ ?</h1>
 
                         <ListGroup>
                          
                           <ListGroup.Item className="border-0">
-                          <i className="bi bi-telephone me-1"></i>  Call us on: <strong>+91 123 456 789</strong>
+                          <i className="bi bi-telephone me-1"></i>  Gọi cho chúng tôi <strong>+84 779407905</strong>
                           </ListGroup.Item>
                           <ListGroup.Item className="border-0">
-                          <i className="bi bi-alarm me-1"></i> Timing: <strong>10AM to 7PM</strong>
+                          <i className="bi bi-alarm me-1"></i> Thời gian: <strong>8AM to 7PM</strong>
                           </ListGroup.Item>
                           <ListGroup.Item className="border-0">
-                          <strong> <i className="bi bi-headset me-1"></i> Let us call you</strong> 
+                          <strong> <i className="bi bi-headset me-1"></i> Hãy để chúng tôi gọi bạn</strong> 
                           </ListGroup.Item>
-                          <ListGroup.Item className="border-0"><i className="bi bi-calendar-check me-1"></i> <strong> Book Appointments</strong> </ListGroup.Item>
+                          <ListGroup.Item className="border-0"><i className="bi bi-calendar-check me-1"></i> <strong> Đặt lịch hẹn</strong> </ListGroup.Item>
                         </ListGroup>
                       </Card.Body>
                     </Card>

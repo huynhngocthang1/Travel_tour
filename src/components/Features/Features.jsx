@@ -65,29 +65,28 @@ const Features = () => {
     {
       id: 0,
       image: feature1,
-      title: "Discover the possibilities",
-      des: "With nearly half a million attractions, hotels & more, you're sure to find joy.",
+      title: "Khám phá những khả năng",
+      des: "Với gần nửa triệu điểm tham quan, khách sạn & hơn thế nữa, bạn chắc chắn sẽ tìm thấy niềm vui.",
     },
     {
       id: 1,
       image: feature2,
-      title: "Enjoy deals & delights",
-      des: "Quality activities. Great prices. Plus, earn credits to save more.",
+      title: "Tận hưởng ưu đãi & khuyến mãi",
+      des: "Hoạt động chất lượng. Giá cả tuyệt vời. Cùng với đó, tích điểm để tiết kiệm hơn.",
     },
     {
       id: 2,
       image: feature3,
-      title: "Exploring made easyt",
-      des: "Book last minute, skip lines &amp; get free cancellation for easier exploring.",
+      title: "Khám phá dễ dàng",
+      des: "Đặt phút chót, bỏ qua hàng chờ & hủy miễn phí để chuyến đi thuận tiện hơn.",
     },
-
     {
       id: 3,
       image: feature4,
-      title: "Travel you can trust",
-      des: "Read reviews & get reliable customer support. We're with you at every step.",
+      title: "Hành trình đáng tin cậy",
+      des: "Đọc đánh giá & nhận hỗ trợ khách hàng đáng tin cậy. Chúng tôi đồng hành cùng bạn trên từng bước đường.",
     },
-  ];
+];
 
   return (
     <>

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./forgotPassword.css"; // Import CSS riêng
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1); // Step 1: Nhập email, Step 2: Nhập OTP
   const navigate = useNavigate();
 
   // Hàm kiểm tra định dạng email
@@ -13,59 +16,117 @@ const ForgotPasswordForm = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSubmit = async (e) => {
+  // Hàm kiểm tra OTP (giả lập)
+  const validateOtp = (otp) => {
+    return /^\d{6}$/.test(otp); // OTP gồm 6 số
+  };
+
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setErrors("");
     setSuccess("");
 
-    // Kiểm tra nhập email
+    // Kiểm tra email nhập vào
     if (!email) {
       setErrors("Email không được để trống");
-      setTimeout(() => setErrors(""), 3000);
       return;
     } else if (!validateEmail(email)) {
       setErrors("Email không hợp lệ");
-      setTimeout(() => setErrors(""), 3000);
       return;
     }
 
     setLoading(true);
 
-    // Giả lập gọi API gửi email (2 giây)
+    // Giả lập gửi email (2 giây)
     setTimeout(() => {
       setLoading(false);
-      setSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.");
+      setSuccess("Mã OTP đã được gửi đến email của bạn.");
+      setStep(2); // Chuyển sang bước nhập OTP
+    }, 2000);
+  };
 
-      // Chuyển hướng về trang đăng nhập sau 3 giây
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+    setErrors("");
+    setSuccess("");
+
+    // Kiểm tra mã OTP
+    if (!otp) {
+      setErrors("Vui lòng nhập mã OTP");
+      return;
+    } else if (!validateOtp(otp)) {
+      setErrors("Mã OTP không hợp lệ (gồm 6 số)");
+      return;
+    }
+
+    setLoading(true);
+
+    // Giả lập xác thực OTP (2 giây)
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess("Xác thực thành công! Vui lòng đặt lại mật khẩu mới.");
+
+      // Chuyển hướng đến trang đặt lại mật khẩu
       setTimeout(() => {
-        navigate("/login");
+        navigate("/reset-password");
       }, 3000);
     }, 2000);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="forgot-password-form">
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Nhập email của bạn"
-          disabled={loading}
-        />
-        {errors && <p className="error-message">{errors}</p>}
-        {success && <p className="success-message">{success}</p>}
+    <div className="forgot-password-container">
+      <div className="forgot-password-box">
+        <h2>Quên mật khẩu</h2>
+        <p>Nhập email của bạn để nhận mã OTP</p>
+
+        {step === 1 ? (
+          <form onSubmit={handleEmailSubmit}>
+            <div className="input-group">
+              <label>Email:</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Nhập email của bạn"
+                disabled={loading}
+              />
+            </div>
+
+            {errors && <p className="forgot-error-message">{errors}</p>}
+            {success && <p className="success-message">{success}</p>}
+
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Đang gửi..." : "Gửi mã OTP"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleOtpSubmit}>
+            <div className="input-group">
+              <label>Mã OTP:</label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Nhập mã OTP (6 số)"
+                disabled={loading}
+              />
+            </div>
+
+            {errors && <p className="error-message">{errors}</p>}
+            {success && <p className="success-message">{success}</p>}
+
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? "Đang xác thực..." : "Xác nhận OTP"}
+            </button>
+          </form>
+        )}
+
+        {/* Link quay lại đăng nhập */}
+        <p className="back-to-login" onClick={() => navigate("/login")}>
+          Quay lại trang đăng nhập
+        </p>
       </div>
-      <button type="submit" disabled={loading}>
-        {loading ? "Đang gửi..." : "Gửi liên kết"}
-      </button>
-      
-      {/* Link quay lại đăng nhập */}
-      <p className="back-to-login" onClick={() => navigate("/login")}>
-        Quay lại trang đăng nhập
-      </p>
-    </form>
+    </div>
   );
 };
 

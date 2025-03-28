@@ -12,11 +12,11 @@ const AdvanceSearch = () => {
   const [endDate, setEndDate] = useState(new Date());
 
   const selectedLocation =(value)=>{
-    console.log("Location", value)
+    console.log("Vị trí", value)
   }
 
   const selectedGuest =(value)=>{
-    console.log("Guest ", value)
+    console.log("Khách ", value)
   }
 
   return (
@@ -29,14 +29,14 @@ const AdvanceSearch = () => {
                 <div className="item-search">
                   {/*  Using Props to Pass Data */}
                   <CustomDropdown
-                    label="Location"
+                    label="Vị trí"
                     onSelect={selectedLocation}
                     options={[
-                      "USA, Turkish",
-                      "Tokyo, Japan",
-                      "Sydney, Australia",
-                      "Melbourne, Australia",
-                      "Paris, France",
+                      "Cố Đô Huế, TP. Huế",
+                      "Tràng An, Ninh Bình",
+                      "SaPa, Lào Cai",
+                      "Động Phong Nha, Quảng Bình",
+                      "Phố Cổ Hội An, Quảng Nam",
                     ]}
                   />
                 </div>
@@ -65,12 +65,12 @@ const AdvanceSearch = () => {
                 </div>
                 <div className="item-search bd-none">
                   <CustomDropdown
-                    label="Guest"
+                    label="Khách"
                     onSelect={selectedGuest}
                     options={[
-                      "2 adults, 1 children",
-                      "	2 adults, 1 children",
-                      "2 adults, 3 children",
+                      "2 người lớn, 1 trẻ em",
+                      "2 người lớn, 1 trẻ em",                      
+                      "2 người lớn, 3 trẻ em",
                     ]}
                   />
                 </div>

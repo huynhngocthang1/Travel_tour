@@ -28,7 +28,7 @@ const Filters = () => {
 
         <Accordion defaultActiveKey="0">
           <Accordion.Item eventKey="1">
-            <Accordion.Header>Categories </Accordion.Header>
+            <Accordion.Header>Danh mục Tour </Accordion.Header>
             <Accordion.Body>
               {Categories.map((category, inx) => {
                 return (
@@ -47,7 +47,7 @@ const Filters = () => {
 
         <Accordion defaultActiveKey="0">
           <Accordion.Item eventKey="1">
-            <Accordion.Header>Duration </Accordion.Header>
+            <Accordion.Header>Thời gian </Accordion.Header>
             <Accordion.Body>
               {Duration.map((days, inx) => {
                 return (
@@ -66,7 +66,7 @@ const Filters = () => {
 
         <Accordion defaultActiveKey="0">
           <Accordion.Item eventKey="1">
-            <Accordion.Header>Price </Accordion.Header>
+            <Accordion.Header>Giá </Accordion.Header>
             <Accordion.Body>
               {PriceRange.map((Price, inx) => {
                 return (
@@ -85,7 +85,7 @@ const Filters = () => {
 
         <Accordion defaultActiveKey="0">
           <Accordion.Item eventKey="1">
-            <Accordion.Header>Rating </Accordion.Header>
+            <Accordion.Header>Đánh giá </Accordion.Header>
             <Accordion.Body>
               {Ratings.map((rating, inx) => {
                 return (
