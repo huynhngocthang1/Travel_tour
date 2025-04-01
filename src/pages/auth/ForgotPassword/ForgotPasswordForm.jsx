@@ -1,8 +1,8 @@
-// src/pages/auth/ForgotPassword/ForgotPasswordForm.jsx
+// src/pages/Auth/ForgotPassword/ForgotPasswordForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { forgotPassword } from "../../../services/authService";
 import "./forgotPassword.css";
 
 const ForgotPasswordForm = () => {
@@ -12,13 +12,11 @@ const ForgotPasswordForm = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm kiểm tra định dạng email hợp lệ
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  // Xác thực form
   const validateForm = () => {
     let newErrors = {};
 
@@ -32,7 +30,6 @@ const ForgotPasswordForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Xử lý khi bấm nút gửi yêu cầu
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -40,9 +37,9 @@ const ForgotPasswordForm = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/forgot-password", { email });
+      await forgotPassword(email);
       toast.success("Yêu cầu đã được gửi! Vui lòng kiểm tra email của bạn.");
-      setTimeout(() => navigate("/login"), 2000); // Chuyển hướng sau 2 giây
+      setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
@@ -52,7 +49,6 @@ const ForgotPasswordForm = () => {
     }
   };
 
-  // Xử lý khi nhập vào input
   const handleInputChange = (field, value) => {
     setTouched({ ...touched, [field]: true });
     setErrors({ ...errors, [field]: "" });
@@ -61,7 +57,6 @@ const ForgotPasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="forgot-password-form">
-      {/* Ô nhập Email */}
       <div className={`input-group ${errors.email ? "input-error" : ""}`}>
         <label>Email:</label>
         <input

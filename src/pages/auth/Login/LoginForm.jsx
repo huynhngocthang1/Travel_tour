@@ -1,8 +1,8 @@
-// src/auth/Login/LoginForm.jsx
+// src/pages/Auth/Login/LoginForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { login } from "../../../services/authService";
 import "./login.css";
 
 const LoginForm = ({ onLoginSuccess }) => {
@@ -51,12 +51,8 @@ const LoginForm = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
-        email,
-        password,
-      });
-
-      onLoginSuccess(response.data.token, response.data.user);
+      const response = await login({ email, password });
+      onLoginSuccess(response.token, response.user);
       toast.success("Đăng nhập thành công!");
     } catch (error) {
       const errorMessage =

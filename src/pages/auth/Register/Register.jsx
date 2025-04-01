@@ -1,25 +1,26 @@
-// src/auth/Register/Register.jsx
+// src/pages/Auth/Register/Register.jsx
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Breadcrumbs from "../../../components/Breadcrumbs/Breadcrumbs";
 import RegisterForm from "./RegisterForm";
+import { useAuth } from "../../../context/AuthContext";
 import "./register.css";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     document.title = "Đăng ký - GoTravel";
     window.scrollTo(0, 0);
 
     // Kiểm tra nếu người dùng đã đăng nhập, chuyển hướng đến dashboard
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (user) {
       navigate("/dashboard");
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   return (
     <>

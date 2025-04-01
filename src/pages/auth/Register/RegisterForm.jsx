@@ -1,8 +1,8 @@
-// src/auth/Register/RegisterForm.jsx
+// src/pages/Auth/Register/RegisterForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { register } from "../../../services/authService";
 import "./register.css";
 
 const RegisterForm = () => {
@@ -17,19 +17,16 @@ const RegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm kiểm tra định dạng email hợp lệ
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  // Hàm kiểm tra mật khẩu hợp lệ
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{6,}$/;
     return passwordRegex.test(password);
   };
 
-  // Xác thực form
   const validateForm = () => {
     let newErrors = {};
 
@@ -60,7 +57,6 @@ const RegisterForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Xử lý khi bấm nút đăng ký
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -68,14 +64,9 @@ const RegisterForm = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/register", {
-        fullName,
-        email,
-        password,
-      });
-
+      await register({ fullName, email, password });
       toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      navigate("/login"); // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+      navigate("/login");
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
@@ -85,7 +76,6 @@ const RegisterForm = () => {
     }
   };
 
-  // Xử lý khi nhập vào input
   const handleInputChange = (field, value) => {
     setTouched({ ...touched, [field]: true });
     setErrors({ ...errors, [field]: "" });
@@ -97,7 +87,6 @@ const RegisterForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="register-form">
-      {/* Họ tên */}
       <div className={`input-group ${errors.fullName ? "input-error" : ""}`}>
         <label>Họ tên:</label>
         <input
@@ -115,7 +104,6 @@ const RegisterForm = () => {
         </div>
       </div>
 
-      {/* Email */}
       <div className={`input-group ${errors.email ? "input-error" : ""}`}>
         <label>Email:</label>
         <input
@@ -133,7 +121,6 @@ const RegisterForm = () => {
         </div>
       </div>
 
-      {/* Mật khẩu */}
       <div className={`input-group ${errors.password ? "input-error" : ""}`}>
         <label>Mật khẩu:</label>
         <div className="password-wrapper">
@@ -161,7 +148,6 @@ const RegisterForm = () => {
         </div>
       </div>
 
-      {/* Xác nhận mật khẩu */}
       <div
         className={`input-group ${errors.confirmPassword ? "input-error" : ""}`}
       >
