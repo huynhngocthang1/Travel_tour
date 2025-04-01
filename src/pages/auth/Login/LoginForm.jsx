@@ -1,26 +1,29 @@
+// src/auth/Login/LoginForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "./login.css";
 
-const LoginForm = () => {
+const LoginForm = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  // Hàm kiểm tra định dạng email hợp lệ
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  // Hàm kiểm tra mật khẩu hợp lệ
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{6,}$/;
     return passwordRegex.test(password);
   };
 
-  // Xác thực form
   const validateForm = () => {
     let newErrors = {};
 
@@ -33,33 +36,46 @@ const LoginForm = () => {
     if (!password.trim()) {
       newErrors.password = "Mật khẩu không được để trống";
     } else if (!isValidPassword(password)) {
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số và 1 ký tự đặc biệt";
+      newErrors.password =
+        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số và 1 ký tự đặc biệt";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Xử lý khi bấm nút đăng nhập
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Đăng nhập thành công!", { email, password });
-      navigate("/");
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email,
+        password,
+      });
+
+      onLoginSuccess(response.data.token, response.data.user);
+      toast.success("Đăng nhập thành công!");
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Xử lý khi nhập vào input
   const handleInputChange = (field, value) => {
     setTouched({ ...touched, [field]: true });
-    setErrors({ ...errors, [field]: "" }); // Ẩn lỗi khi người dùng bắt đầu nhập
+    setErrors({ ...errors, [field]: "" });
     if (field === "email") setEmail(value);
     if (field === "password") setPassword(value);
   };
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      {/* Ô nhập Email */}
       <div className={`input-group ${errors.email ? "input-error" : ""}`}>
         <label>Email:</label>
         <input
@@ -68,32 +84,51 @@ const LoginForm = () => {
           onChange={(e) => handleInputChange("email", e.target.value)}
           onBlur={() => setTouched({ ...touched, email: true })}
           placeholder="Nhập email của bạn"
+          disabled={loading}
         />
         <div className="error-container">
-          {touched.email && errors.email && <p className="error-message">{errors.email}</p>}
+          {touched.email && errors.email && (
+            <p className="error-message">{errors.email}</p>
+          )}
         </div>
       </div>
 
-      {/* Ô nhập Mật khẩu */}
       <div className={`input-group ${errors.password ? "input-error" : ""}`}>
         <label>Mật khẩu:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-          onBlur={() => setTouched({ ...touched, password: true })}
-          placeholder="Nhập mật khẩu"
-        />
+        <div className="password-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            onBlur={() => setTouched({ ...touched, password: true })}
+            placeholder="Nhập mật khẩu"
+            disabled={loading}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="toggle-password"
+            disabled={loading}
+          >
+            {showPassword ? "Ẩn" : "Hiện"}
+          </button>
+        </div>
         <div className="error-container">
-          {touched.password && errors.password && <p className="error-message">{errors.password}</p>}
+          {touched.password && errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
         </div>
       </div>
 
-      <button type="submit" className="login-button">Đăng nhập</button>
+      <button type="submit" className="login-button" disabled={loading}>
+        {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+      </button>
 
       <div className="login-links">
         <p onClick={() => navigate("/forgot-password")}>Quên mật khẩu?</p>
-        <p onClick={() => navigate("/register")}>Chưa có tài khoản? <span>Đăng ký</span></p>
+        <p onClick={() => navigate("/register")}>
+          Chưa có tài khoản? <span>Đăng ký</span>
+        </p>
       </div>
     </form>
   );

@@ -1,132 +1,98 @@
+// src/pages/auth/ForgotPassword/ForgotPasswordForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./forgotPassword.css"; // Import CSS riêng
+import axios from "axios";
+import { toast } from "react-toastify";
+import "./forgotPassword.css";
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [errors, setErrors] = useState("");
-  const [success, setSuccess] = useState("");
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // Step 1: Nhập email, Step 2: Nhập OTP
   const navigate = useNavigate();
 
-  // Hàm kiểm tra định dạng email
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // Hàm kiểm tra định dạng email hợp lệ
+  const isValidEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
   };
 
-  // Hàm kiểm tra OTP (giả lập)
-  const validateOtp = (otp) => {
-    return /^\d{6}$/.test(otp); // OTP gồm 6 số
-  };
+  // Xác thực form
+  const validateForm = () => {
+    let newErrors = {};
 
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault();
-    setErrors("");
-    setSuccess("");
-
-    // Kiểm tra email nhập vào
-    if (!email) {
-      setErrors("Email không được để trống");
-      return;
-    } else if (!validateEmail(email)) {
-      setErrors("Email không hợp lệ");
-      return;
+    if (!email.trim()) {
+      newErrors.email = "Email không được để trống";
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Email không hợp lệ";
     }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Xử lý khi bấm nút gửi yêu cầu
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
     setLoading(true);
 
-    // Giả lập gửi email (2 giây)
-    setTimeout(() => {
+    try {
+      await axios.post("http://localhost:5000/api/forgot-password", { email });
+      toast.success("Yêu cầu đã được gửi! Vui lòng kiểm tra email của bạn.");
+      setTimeout(() => navigate("/login"), 2000); // Chuyển hướng sau 2 giây
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
-      setSuccess("Mã OTP đã được gửi đến email của bạn.");
-      setStep(2); // Chuyển sang bước nhập OTP
-    }, 2000);
+    }
   };
 
-  const handleOtpSubmit = (e) => {
-    e.preventDefault();
-    setErrors("");
-    setSuccess("");
-
-    // Kiểm tra mã OTP
-    if (!otp) {
-      setErrors("Vui lòng nhập mã OTP");
-      return;
-    } else if (!validateOtp(otp)) {
-      setErrors("Mã OTP không hợp lệ (gồm 6 số)");
-      return;
-    }
-
-    setLoading(true);
-
-    // Giả lập xác thực OTP (2 giây)
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess("Xác thực thành công! Vui lòng đặt lại mật khẩu mới.");
-
-      // Chuyển hướng đến trang đặt lại mật khẩu
-      setTimeout(() => {
-        navigate("/reset-password");
-      }, 3000);
-    }, 2000);
+  // Xử lý khi nhập vào input
+  const handleInputChange = (field, value) => {
+    setTouched({ ...touched, [field]: true });
+    setErrors({ ...errors, [field]: "" });
+    if (field === "email") setEmail(value);
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-box">
-        <h2>Quên mật khẩu</h2>
-        <p>Nhập email của bạn để nhận mã OTP</p>
+    <form onSubmit={handleSubmit} className="forgot-password-form">
+      {/* Ô nhập Email */}
+      <div className={`input-group ${errors.email ? "input-error" : ""}`}>
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          onBlur={() => setTouched({ ...touched, email: true })}
+          placeholder="Nhập email của bạn"
+          disabled={loading}
+        />
+        <div className="error-container">
+          {touched.email && errors.email && (
+            <p className="error-message">{errors.email}</p>
+          )}
+        </div>
+      </div>
 
-        {step === 1 ? (
-          <form onSubmit={handleEmailSubmit}>
-            <div className="input-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Nhập email của bạn"
-                disabled={loading}
-              />
-            </div>
+      <button
+        type="submit"
+        className="forgot-password-button"
+        disabled={loading}
+      >
+        {loading ? "Đang gửi..." : "Gửi yêu cầu"}
+      </button>
 
-            {errors && <p className="forgot-error-message">{errors}</p>}
-            {success && <p className="success-message">{success}</p>}
-
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Đang gửi..." : "Gửi mã OTP"}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleOtpSubmit}>
-            <div className="input-group">
-              <label>Mã OTP:</label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Nhập mã OTP (6 số)"
-                disabled={loading}
-              />
-            </div>
-
-            {errors && <p className="error-message">{errors}</p>}
-            {success && <p className="success-message">{success}</p>}
-
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Đang xác thực..." : "Xác nhận OTP"}
-            </button>
-          </form>
-        )}
-
-        {/* Link quay lại đăng nhập */}
-        <p className="back-to-login" onClick={() => navigate("/login")}>
-          Quay lại trang đăng nhập
+      <div className="forgot-password-links">
+        <p onClick={() => navigate("/login")}>
+          Quay lại <span>Đăng nhập</span>
         </p>
       </div>
-    </div>
+    </form>
   );
 };
 

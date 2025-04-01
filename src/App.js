@@ -9,13 +9,12 @@ import Tours from "./pages/Tours/Tours";
 import TourDetails from "./pages/Tours/TourDetails";
 import Booking from "./pages/Booking/Booking";
 import Destinations from "./pages/Destinations/Destinations";
-import PhotoGallary from "./pages/PhotoGallery/PhotoGallery";
 import PhotoGallery from "./pages/PhotoGallery/PhotoGallery";
 import Login from "./pages/auth/Login/Login";
 import Register from "./pages/auth/Register/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword/ForgotPassword";
 import CartPage from "./pages/Cart/CartPage";
-
+import Chatbox from "./components/Chatbox/ChatBox";
 
 function App() {
   return (
@@ -31,10 +30,11 @@ function App() {
         <Route path="destinations" element={<Destinations />} />
         <Route path="gallery" element={<PhotoGallery />} />
         <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register/>}/>
-        <Route path="forgot-password" element={<ForgotPassword/>}/>
-        <Route path="cart" element={<CartPage/>}/>
+        <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="cart" element={<CartPage />} />
       </Routes>
+      <Chatbox/>
       <Footer />
     </>
   );

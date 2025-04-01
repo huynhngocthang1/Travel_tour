@@ -124,7 +124,7 @@ const Contact = () => {
             <Col xl="6" md="6">
               <Card className="bg-light p-4 border-0 shadow-sm">
                 <div className="form-box">
-                  <h1 className="h3 font-bold mb-4">Send us message</h1>
+                  <h1 className="h3 font-bold mb-4">Gửi tin nhắn cho chúng tôi</h1>
                   <Form>
                     <Row>
                       <Col md="6">
@@ -174,7 +174,7 @@ const Contact = () => {
 
                      
                     </Row>
-                    <button className="primaryBtn mt-3" type="button"> Send Message</button>
+                    <button className="primaryBtn mt-3" type="button"> Gửi tin</button>
                   </Form>
                 </div>
               </Card>

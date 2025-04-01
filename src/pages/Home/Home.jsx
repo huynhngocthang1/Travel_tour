@@ -82,7 +82,7 @@ const Home = () => {
           <Row>
             <Col md="12">
               <div className="main_heading">
-                <h1> Top Destination For Your Next Vacation </h1>
+                <h1> TOUR NỔI BẬT </h1>
               </div>
             </Col>
           </Row>
@@ -108,7 +108,7 @@ const Home = () => {
         <Row>
           <Col md="12">
             <div className="main_heading">
-              <h1> Popular Activities </h1>
+              <h1> TOUR PHỔ BIẾN </h1>
             </div>
           </Col>
         </Row>
@@ -128,24 +128,23 @@ const Home = () => {
         <Container>
           <Row className="align-items-center">
             <Col md="8">
-              <h5 className="title">CALL TO ACTION</h5>
+              <h5 className="title">HÃY GỌI ĐIỆN NGAY</h5>
               <h2 className="heading">
-                READY FOR UNFORGATABLE TRAVEL. REMEMBER US!
+                Sẵn sàng cho chuyến du lịch của bạn
               </h2>
               <p className="text">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s,{" "}
+                Hãy tận hưởng kỳ nghỉ một cách trọn vẹn nhất. Chúng tôi luôn đồng hành bạn tới những
+                nơi mà bạn muốn đến. Khám phá cùng các bạn những nơi đẹp nhất Việt Nam,{" "}
               </p>
             </Col>
             <Col md="4" className="text-center mt-3 mt-md-0">
               <a
-                href="tel:6398312365"
+                href="tel:+84779407905"
                 className="secondary_btn bounce"
                 rel="no"
               >
                 {" "}
-                Contact Us !
+                Gọi điện ngay !
               </a>
             </Col>
           </Row>
@@ -158,7 +157,7 @@ const Home = () => {
           <Row>
             <Col md="12">
               <div className="main_heading">
-                <h1>Photo Gallery </h1>
+                <h1>Thư viện ảnh </h1>
               </div>
             </Col>
           </Row>

@@ -1,153 +1,206 @@
+// src/auth/Register/RegisterForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./register.css"; // Import CSS riêng
+import axios from "axios";
+import { toast } from "react-toastify";
+import "./register.css";
 
 const RegisterForm = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  // Regex kiểm tra email & mật khẩu
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
-  // Kiểm tra lỗi khi blur input
-  const validateField = (field, value) => {
-    let newErrors = { ...errors };
-
-    if (field === "name") {
-      if (!value.trim()) newErrors.name = "Tên không được để trống";
-      else delete newErrors.name;
-    }
-
-    if (field === "email") {
-      if (!value.trim()) newErrors.email = "Email không được để trống";
-      else if (!emailRegex.test(value)) newErrors.email = "Email không hợp lệ";
-      else delete newErrors.email;
-    }
-
-    if (field === "password") {
-      if (!value.trim()) newErrors.password = "Mật khẩu không được để trống";
-      else if (!passwordRegex.test(value))
-        newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số, 1 ký tự đặc biệt";
-      else delete newErrors.password;
-    }
-
-    if (field === "confirmPassword") {
-      if (!value.trim()) newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
-      else if (value !== user.password) newErrors.confirmPassword = "Mật khẩu không khớp";
-      else delete newErrors.confirmPassword;
-    }
-
-    setErrors(newErrors);
+  // Hàm kiểm tra định dạng email hợp lệ
+  const isValidEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
   };
 
-  // Xử lý nhập input
-  const handleInputChange = (field, value) => {
-    setUser({ ...user, [field]: value });
-    setTouched({ ...touched, [field]: true });
-
-    // Kiểm tra lỗi ngay khi nhập đúng
-    validateField(field, value);
+  // Hàm kiểm tra mật khẩu hợp lệ
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{6,}$/;
+    return passwordRegex.test(password);
   };
 
-  // Xác thực toàn bộ form trước khi submit
+  // Xác thực form
   const validateForm = () => {
     let newErrors = {};
 
-    Object.keys(user).forEach((field) => {
-      validateField(field, user[field]);
-      if (!user[field].trim()) newErrors[field] = "Không được để trống";
-    });
+    if (!fullName.trim()) {
+      newErrors.fullName = "Họ tên không được để trống";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email không được để trống";
+    } else if (!isValidEmail(email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Mật khẩu không được để trống";
+    } else if (!isValidPassword(password)) {
+      newErrors.password =
+        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số và 1 ký tự đặc biệt";
+    }
+
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = "Xác nhận mật khẩu không được để trống";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  // Xử lý khi bấm nút đăng ký
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Đăng ký thành công!", user);
-      navigate("/login"); // Điều hướng về trang đăng nhập
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/register", {
+        fullName,
+        email,
+        password,
+      });
+
+      toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+      navigate("/login"); // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Xử lý khi nhập vào input
+  const handleInputChange = (field, value) => {
+    setTouched({ ...touched, [field]: true });
+    setErrors({ ...errors, [field]: "" });
+    if (field === "fullName") setFullName(value);
+    if (field === "email") setEmail(value);
+    if (field === "password") setPassword(value);
+    if (field === "confirmPassword") setConfirmPassword(value);
+  };
+
   return (
-    <div className="register-container">
-      <div className="register-header">
-        <h1>Đăng ký</h1>
-        <p>Tạo tài khoản mới để trải nghiệm ngay!</p>
-      </div>
-      <form onSubmit={handleSubmit} className="register-form">
-        {/* Tên */}
-        <div className={`register-input-group ${errors.name ? "register-input-error" : ""}`}>
-          <label>Tên:</label>
-          <input
-            type="text"
-            className="register-input"
-            value={user.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            onBlur={() => validateField("name", user.name)}
-          />
-          {touched.name && errors.name && <p className="register-error-message">{errors.name}</p>}
-        </div>
-
-        {/* Email */}
-        <div className={`register-input-group ${errors.email ? "register-input-error" : ""}`}>
-          <label>Email:</label>
-          <input
-            type="email"
-            className="register-input"
-            value={user.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            onBlur={() => validateField("email", user.email)}
-          />
-          {touched.email && errors.email && <p className="register-error-message">{errors.email}</p>}
-        </div>
-
-        {/* Mật khẩu */}
-        <div className={`register-input-group ${errors.password ? "register-input-error" : ""}`}>
-          <label>Mật khẩu:</label>
-          <input
-            type="password"
-            className="register-input"
-            value={user.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            onBlur={() => validateField("password", user.password)}
-          />
-          {touched.password && errors.password && <p className="register-error-message">{errors.password}</p>}
-        </div>
-
-        {/* Xác nhận mật khẩu */}
-        <div className={`register-input-group ${errors.confirmPassword ? "register-input-error" : ""}`}>
-          <label>Nhập lại mật khẩu:</label>
-          <input
-            type="password"
-            className="register-input"
-            value={user.confirmPassword}
-            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-            onBlur={() => validateField("confirmPassword", user.confirmPassword)}
-          />
-          {touched.confirmPassword && errors.confirmPassword && (
-            <p className="register-error-message">{errors.confirmPassword}</p>
+    <form onSubmit={handleSubmit} className="register-form">
+      {/* Họ tên */}
+      <div className={`input-group ${errors.fullName ? "input-error" : ""}`}>
+        <label>Họ tên:</label>
+        <input
+          type="text"
+          value={fullName}
+          onChange={(e) => handleInputChange("fullName", e.target.value)}
+          onBlur={() => setTouched({ ...touched, fullName: true })}
+          placeholder="Nhập họ tên của bạn"
+          disabled={loading}
+        />
+        <div className="error-container">
+          {touched.fullName && errors.fullName && (
+            <p className="error-message">{errors.fullName}</p>
           )}
         </div>
+      </div>
 
-        <button type="submit" className="register-button">Đăng ký</button>
+      {/* Email */}
+      <div className={`input-group ${errors.email ? "input-error" : ""}`}>
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          onBlur={() => setTouched({ ...touched, email: true })}
+          placeholder="Nhập email của bạn"
+          disabled={loading}
+        />
+        <div className="error-container">
+          {touched.email && errors.email && (
+            <p className="error-message">{errors.email}</p>
+          )}
+        </div>
+      </div>
 
-        {/* Link quay lại trang đăng nhập */}
-        <p className="register-links" onClick={() => navigate("/login")}>
+      {/* Mật khẩu */}
+      <div className={`input-group ${errors.password ? "input-error" : ""}`}>
+        <label>Mật khẩu:</label>
+        <div className="password-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            onBlur={() => setTouched({ ...touched, password: true })}
+            placeholder="Nhập mật khẩu"
+            disabled={loading}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="toggle-password"
+            disabled={loading}
+          >
+            {showPassword ? "Ẩn" : "Hiện"}
+          </button>
+        </div>
+        <div className="error-container">
+          {touched.password && errors.password && (
+            <p className="error-message">{errors.password}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Xác nhận mật khẩu */}
+      <div
+        className={`input-group ${errors.confirmPassword ? "input-error" : ""}`}
+      >
+        <label>Xác nhận mật khẩu:</label>
+        <div className="password-wrapper">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+            onBlur={() => setTouched({ ...touched, confirmPassword: true })}
+            placeholder="Xác nhận mật khẩu"
+            disabled={loading}
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="toggle-password"
+            disabled={loading}
+          >
+            {showConfirmPassword ? "Ẩn" : "Hiện"}
+          </button>
+        </div>
+        <div className="error-container">
+          {touched.confirmPassword && errors.confirmPassword && (
+            <p className="error-message">{errors.confirmPassword}</p>
+          )}
+        </div>
+      </div>
+
+      <button type="submit" className="register-button" disabled={loading}>
+        {loading ? "Đang đăng ký..." : "Đăng ký"}
+      </button>
+
+      <div className="register-links">
+        <p onClick={() => navigate("/login")}>
           Đã có tài khoản? <span>Đăng nhập</span>
         </p>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

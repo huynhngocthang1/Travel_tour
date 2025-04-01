@@ -26,7 +26,7 @@ const PopularCard = ({val}) => {
                     <i className="bi bi-star-fill me-1"></i>
                   </span>
                   <span>{val.rating} </span>
-                  <span>( {val.reviews} reviews )</span>
+                  <span>( {val.reviews} đánh giá )</span>
                 </p>
                 {val.category.map((cat, index)=>{
                   return(

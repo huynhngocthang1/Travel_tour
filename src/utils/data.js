@@ -1,11 +1,11 @@
 // destinations img
-import tour4 from "../assets/images/tour/Tokyo.png";
-import tour5 from "../assets/images/tour/bali-1.png";
+import tour4 from "../assets/images/tour/hoian.jpg";
+import tour5 from "../assets/images/tour/hue.jpg";
 import tour6 from "../assets/images/tour/bangkok.png";
 import tour7 from "../assets/images/tour/cancun.png";
 import tour8 from "../assets/images/tour/nah-trang.png";
 import tour9 from "../assets/images/tour/phuket.png";
-import tour10 from "../assets/images/tour/paris.png";
+import tour10 from "../assets/images/tour/halong.jpg";
 import tour11 from "../assets/images/tour/malaysia.png";
 
 // populars img
@@ -31,7 +31,7 @@ import image8 from "../assets/images/new/8.jpg";
 export const destinationsData = [
   {
     id: 0,
-    name: "Bali",
+    name: "Huế",
     tours: "5 tours and activities",
     image: tour5,
     link: "tour-name",
@@ -39,7 +39,7 @@ export const destinationsData = [
   },
   {
     id: 1,
-    name: "Tokyo",
+    name: "Hội An",
     tours: "9 tours and activities",
     image: tour4,
     link: "tour-name",
@@ -47,7 +47,7 @@ export const destinationsData = [
 
   {
     id: 2,
-    name: "Bangkok",
+    name: "Đà nẵng",
     tours: "5 tours and activities",
     image: tour6,
     link: "tour-name",
@@ -55,7 +55,7 @@ export const destinationsData = [
 
   {
     id: 3,
-    name: "Cancun",
+    name: "SaPa",
     tours: "4 tours and activities",
     image: tour7,
     link: "tour-name",
@@ -69,21 +69,21 @@ export const destinationsData = [
   },
   {
     id: 5,
-    name: "Phuket",
+    name: "Phú Quốc",
     tours: "4 tours and activities",
     image: tour9,
     link: "tour-name",
   },
   {
     id: 6,
-    name: "Paris",
+    name: "Hạ Long",
     tours: "6 tours and activities",
     image: tour10,
     link: "tour-name",
   },
   {
     id: 7,
-    name: "Malaysia",
+    name: "Tràng An",
     tours: "4 tours and activities",
     image: tour11,
     link: "tour-name",
@@ -240,22 +240,23 @@ export const tourDetails = {
   ],
 
   included: [
-    "Comfortable stay for 4 nights in your preferred category Hotels",
-    "Professional English speaking guide to help you explore the cities",
-    "Breakfast is included as mentioned in Itinerary.",
-    "Per Peron rate on twin sharing basis",
-    "Entrance Tickets to Genting Indoor Theme Park    ",
-    "All Tours & Transfers on Seat In Coach Basis ",
-    "Visit Bali Safari & Marine Park with Jungle Hopper Pass    ",
-  ],
-  exclusion: [
-    "Lunch and dinner are not included in CP plans",
-    "Any other services not specifically mentioned in the inclusions",
-    "Medical and Travel insurance",
-    "Airfare is not included ",
-    "Early Check-In & Late Check-Out ",
-    "Anything which is not specified in Inclusions    ",
-  ],
+    "Lưu trú thoải mái 4 đêm tại khách sạn theo hạng mục bạn chọn",
+    "Hướng dẫn viên chuyên nghiệp nói tiếng Anh để hỗ trợ bạn khám phá các điểm đến",
+    "Bữa sáng được bao gồm theo lịch trình",
+    "Giá áp dụng cho mỗi người khi đặt phòng đôi",
+    "Vé vào cửa Công viên Giải trí Trong nhà Genting",
+    "Tất cả các tour và di chuyển theo lịch trình bằng xe ghép",
+    "Tham quan Vườn thú Safari & Công viên Biển Bali với vé Jungle Hopper",
+],
+exclusion: [
+    "Bữa trưa và bữa tối không bao gồm trong gói CP",
+    "Bất kỳ dịch vụ nào khác không được đề cập trong mục bao gồm",
+    "Bảo hiểm y tế và du lịch",
+    "Vé máy bay không bao gồm",
+    "Nhận phòng sớm và trả phòng trễ",
+    "Bất kỳ chi phí nào không được nêu rõ trong phần bao gồm",
+],
+
 
   images: [
     {
