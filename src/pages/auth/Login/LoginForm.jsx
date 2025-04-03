@@ -1,11 +1,11 @@
-// src/pages/Auth/Login/LoginForm.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 import "./login.css";
 
-const LoginForm = ({ onLoginSuccess }) => {
+const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -13,61 +13,72 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login: loginContext } = useAuth();
 
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  const isValidPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{6,}$/;
-    return passwordRegex.test(password);
-  };
+  const validateField = (field, value) => {
+    let newErrors = { ...errors };
 
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!email.trim()) {
-      newErrors.email = "Email không được để trống";
-    } else if (!isValidEmail(email)) {
-      newErrors.email = "Email không hợp lệ";
+    if (field === "email") {
+      if (!value.trim()) {
+        newErrors.email = "Email không được để trống";
+      } else if (!isValidEmail(value)) {
+        newErrors.email = "Email không hợp lệ";
+      } else {
+        delete newErrors.email;
+      }
     }
 
-    if (!password.trim()) {
-      newErrors.password = "Mật khẩu không được để trống";
-    } else if (!isValidPassword(password)) {
-      newErrors.password =
-        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số và 1 ký tự đặc biệt";
+    if (field === "password") {
+      if (!value.trim()) {
+        newErrors.password = "Mật khẩu không được để trống";
+      } else if (value.length < 6) {
+        newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      } else {
+        delete newErrors.password;
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleInputChange = (field, value) => {
+    setTouched({ ...touched, [field]: true });
+    if (field === "email") setEmail(value);
+    if (field === "password") setPassword(value);
+    validateField(field, value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setTouched({ email: true, password: true });
+    validateField("email", email);
+    validateField("password", password);
+
+    if (Object.keys(errors).length > 0) return;
 
     setLoading(true);
 
     try {
-      const response = await login({ email, password });
-      onLoginSuccess(response.token, response.user);
-      toast.success("Đăng nhập thành công!");
+      const result = await login({ email, password });
+      if (result.success && result.code === 200) {
+        loginContext(result.user, result.token);
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
-      toast.error(errorMessage);
+      toast.error("Đã có lỗi xảy ra. Vui lòng thử lại!");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleInputChange = (field, value) => {
-    setTouched({ ...touched, [field]: true });
-    setErrors({ ...errors, [field]: "" });
-    if (field === "email") setEmail(value);
-    if (field === "password") setPassword(value);
   };
 
   return (

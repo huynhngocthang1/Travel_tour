@@ -1,8 +1,8 @@
-// src/pages/Auth/Register/RegisterForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register } from "../../../services/authService";
+import { register, login } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 import "./register.css";
 
 const RegisterForm = () => {
@@ -16,73 +16,99 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { login: loginContext } = useAuth();
 
   const isValidEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  const isValidPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[^\s]{6,}$/;
-    return passwordRegex.test(password);
-  };
+  const validateField = (field, value) => {
+    let newErrors = { ...errors };
 
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!fullName.trim()) {
-      newErrors.fullName = "Họ tên không được để trống";
+    if (field === "fullName") {
+      if (!value.trim()) {
+        newErrors.fullName = "Họ tên không được để trống";
+      } else {
+        delete newErrors.fullName;
+      }
     }
 
-    if (!email.trim()) {
-      newErrors.email = "Email không được để trống";
-    } else if (!isValidEmail(email)) {
-      newErrors.email = "Email không hợp lệ";
+    if (field === "email") {
+      if (!value.trim()) {
+        newErrors.email = "Email không được để trống";
+      } else if (!isValidEmail(value)) {
+        newErrors.email = "Email không hợp lệ";
+      } else {
+        delete newErrors.email;
+      }
     }
 
-    if (!password.trim()) {
-      newErrors.password = "Mật khẩu không được để trống";
-    } else if (!isValidPassword(password)) {
-      newErrors.password =
-        "Mật khẩu phải có ít nhất 6 ký tự, 1 chữ hoa, 1 số và 1 ký tự đặc biệt";
+    if (field === "password") {
+      if (!value.trim()) {
+        newErrors.password = "Mật khẩu không được để trống";
+      } else if (value.length < 6) {
+        newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      } else {
+        delete newErrors.password;
+      }
     }
 
-    if (!confirmPassword.trim()) {
-      newErrors.confirmPassword = "Xác nhận mật khẩu không được để trống";
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+    if (field === "confirmPassword") {
+      if (!value.trim()) {
+        newErrors.confirmPassword = "Xác nhận mật khẩu không được để trống";
+      } else if (value !== password) {
+        newErrors.confirmPassword = "Mật khẩu xác nhận không khớp";
+      } else {
+        delete newErrors.confirmPassword;
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setLoading(true);
-
-    try {
-      await register({ fullName, email, password });
-      toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      navigate("/login");
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleInputChange = (field, value) => {
     setTouched({ ...touched, [field]: true });
-    setErrors({ ...errors, [field]: "" });
     if (field === "fullName") setFullName(value);
     if (field === "email") setEmail(value);
     if (field === "password") setPassword(value);
     if (field === "confirmPassword") setConfirmPassword(value);
+    validateField(field, value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setTouched({ fullName: true, email: true, password: true, confirmPassword: true });
+    validateField("fullName", fullName);
+    validateField("email", email);
+    validateField("password", password);
+    validateField("confirmPassword", confirmPassword);
+
+    if (Object.keys(errors).length > 0) return;
+
+    setLoading(true);
+
+    try {
+      const registerResult = await register({ fullName, email, password });
+      if (!registerResult.success || registerResult.code !== 200) {
+        toast.error(registerResult.message);
+        setLoading(false);
+        return;
+      }
+
+      const loginResult = await login({ email, password });
+      if (loginResult.success && loginResult.code === 200) {
+        loginContext(loginResult.user, loginResult.token);
+        navigate("/");
+      } else {
+        toast.error(loginResult.message);
+      }
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra. Vui lòng thử lại!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -148,9 +174,7 @@ const RegisterForm = () => {
         </div>
       </div>
 
-      <div
-        className={`input-group ${errors.confirmPassword ? "input-error" : ""}`}
-      >
+      <div className={`input-group ${errors.confirmPassword ? "input-error" : ""}`}>
         <label>Xác nhận mật khẩu:</label>
         <div className="password-wrapper">
           <input

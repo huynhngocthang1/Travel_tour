@@ -1,9 +1,7 @@
-// src/context/AuthContext.js
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { verifyToken } from "../services/authService";
+import { toast } from "react-toastify";
+import { verifyToken, logout } from "../services/authService";
 
-// Thêm giá trị mặc định cho AuthContext
 const AuthContext = createContext({
   user: null,
   token: null,
@@ -16,48 +14,64 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+    const initializeAuth = async () => {
+      try {
+        const storedToken = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
 
-    if (storedToken && storedUser) {
-      verifyToken(storedToken)
-        .then((data) => {
-          if (data.valid) {
+        if (storedToken && storedUser) {
+          const result = await verifyToken();
+          if (result.success && result.code === 200) {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
           } else {
+            toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            navigate("/login");
+            setToken(null);
+            setUser(null);
           }
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [navigate]);
+        }
+      } catch (error) {
+        console.error("Lỗi khi xác thực token:", error);
+        toast.error("Đã có lỗi xảy ra. Vui lòng đăng nhập lại!");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setToken(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const login = (token, user) => {
+    initializeAuth();
+  }, []);
+
+  const login = (userData, token) => {
     localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(userData));
     setToken(token);
-    setUser(user);
+    setUser(userData);
+    toast.success("Đăng nhập thành công!");
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
-    navigate("/login");
+  const logout = async () => {
+    try {
+      const result = await logout();
+      if (result.success && result.code === 200) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setToken(null);
+        setUser(null);
+        toast.success("Đăng xuất thành công!");
+      } else {
+        toast.error(result.message || "Đăng xuất thất bại!");
+      }
+    } catch (error) {
+      toast.error("Đăng xuất thất bại!");
+    }
   };
 
   return (

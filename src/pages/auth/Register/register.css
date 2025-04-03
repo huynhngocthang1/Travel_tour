@@ -15,12 +15,14 @@
   /* Tiêu đề trang đăng ký */
   .register-header {
     margin-bottom: 1.5rem;
+    margin-top: -150px;
   }
   
   .register-header h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #333;
+    margin-bottom: 10px;
   }
   
   .register-header p {
